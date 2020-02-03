@@ -1,6 +1,7 @@
 from flask import Flask, jsonify,request
 from flask_cors import CORS, cross_origin
 from flask_pymongo import PyMongo
+import statement2db as st2db 
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
     get_jwt_identity, get_jwt_claims
@@ -8,6 +9,7 @@ from flask_jwt_extended import (
 )
 app = Flask(__name__)
 CORS(app)
+
 
 
 app.config["MONGO_URI"] = "mongodb://localhost:27017/dhi_analytics"
@@ -71,6 +73,10 @@ def protected():
         'roles': get_jwt_claims()['roles'] ,
         }
     return jsonify(ret), 200
+@app.route('/getAcademicYears')
+def getacademicyear():
+    year=st2db.getacademicyear()   
+    return jsonify({'academicyear':year})
 
 
 if __name__ == "__main__":
