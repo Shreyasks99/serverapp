@@ -78,6 +78,26 @@ def getacademicyear():
     year=st2db.getacademicyear()   
     return jsonify({'academicyear':year})
 
+@app.route('/getSemester')
+def getSemester():
+    sem=st2db.getSemester()
+    return jsonify({'semester':sem})
+
+@app.route('/getUsn/<email>')
+def getUsn(email):
+    usn = st2db.getUsnByEmail(email)
+    return jsonify({"usn":usn})
+
+@app.route('/getAttendance/<usn>/<academic>/<term>')
+def getAttendance(usn,academic,term):
+    attend = st2db.getStudentAttendance(usn,academic,term)
+    return jsonify({"res":attend})
+
+@app.route('/getInternal/<usn>/<academic>/<term>')
+def getInternal(usn,academic,term):
+    internal = st2db.getStudentInternal(usn,academic,term)
+    return jsonify({"res":internal})
+
 
 if __name__ == "__main__":
     app.run(port=8088,debug=True)
