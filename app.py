@@ -98,6 +98,10 @@ def getInternal(usn,academic,term):
     internal = st2db.getStudentInternal(usn,academic,term)
     return jsonify({"res":internal})
 
+@app.route('/getCourseAttendance/<course>/<usn>')
+def courseAttendance(course,usn):
+    attend = st2db.getCourseAttendance(course,usn)
+    return jsonify({"res":attend})
 
 if __name__ == "__main__":
     app.run(port=8088,debug=True)

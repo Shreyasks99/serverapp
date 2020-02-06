@@ -1,4 +1,5 @@
 import pymongo
+from operator import itemgetter
 
 client = pymongo.MongoClient("mongodb://localhost:27017/")
 
@@ -42,7 +43,8 @@ def getStudentAttendance(usn,academic,term):
     res = []
     for x in attend:
         res.append(x)
-    return res
+    result = sorted(res,key=itemgetter("courseName"))
+    return result
 
 def getStudentInternal(usn,academic,term):
     collection = db.pms_university_exam
@@ -53,10 +55,25 @@ def getStudentInternal(usn,academic,term):
     {"$match":{"terms.scores.usn":usn}},
     {"$unwind":{"path":"$terms.scores.courseScores"}},
     {"$group":{"_id":{"coursePerc":"$terms.scores.courseScores.totalScore","usn":"$terms.scores.usn","courseName":"$terms.scores.courseScores.courseName"}}},
-    {"$project":{"perc":"$_id.coursePerc","usn":"$_id.usn","courseName":"$_id.courseName","_id":0}}
+    {"$project":{"perc":"$_id.coursePerc","courseName":"$_id.courseName","_id":0}}
     ])
     res = []
     for x in internal:
         res.append(x)
-    return res
+    result = sorted(res,key=itemgetter("courseName"))
+    return result
+
+def getCourseAttendance(course,usn):
+    collection = db.dhi_student_attendance
+    attend = collection.aggregate([
+    {"$match":{"courseName":course}},
+    {"$unwind":"$students"},
+    {"$match":{"students.usn":usn}},
+    {"$project":{"total":"$students.totalNumberOfClasses","present":"$students.presentCount","_id":0}}
+    ])
+    res = []
+    for x in attend:
+        res.append(x)
+    return res[1]
+
 
