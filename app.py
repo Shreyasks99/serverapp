@@ -103,5 +103,10 @@ def courseAttendance(course,usn):
     attend = st2db.getCourseAttendance(course,usn)
     return jsonify({"res":attend})
 
+@app.route('/getFaculty/<email>')
+def getFaculty(email):
+    eid = st2db.getFacultyid(email)
+    return jsonify({"res":eid})
+
 if __name__ == "__main__":
     app.run(port=8088,debug=True)
