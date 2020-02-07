@@ -99,5 +99,7 @@ def getFacultyAttendance(eid,academic,term):
     result = sorted(res,key=itemgetter("course"))
     return result
 
+def getFacultyCourseAttendance(eid)
+
 
 
