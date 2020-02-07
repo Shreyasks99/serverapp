@@ -76,12 +76,28 @@ def getCourseAttendance(course,usn):
         res.append(x)
     return res[1]
 
-def getFacultyid(email):
+def getFacultyId(email):
     collection = db.dhi_user
     usn = collection.aggregate([{"$match":{"email":email}},{"$project":{"employeeGivenId":1,"_id":0}}])
     res = []
     for x in usn:
         res = x["employeeGivenId"]
     return res
+
+def getFacultyAttendance(eid,academic,term):
+    collection = db.dhi_student_attendance
+    usn = collection.aggregate([{"$match":{"academicYear":academic,"students.termNumber":term}},
+    {"$unwind":{'path':"$faculties"}},
+    {"$unwind":{'path':"$faculties.facultyName"}},
+    {"$match":{"faculties.employeeGivenId":eid}},
+    {"$group":{"_id":{"avg":{"$avg":"$students.percentage"},"faculty":"$faculties.facultyName","course":"$courseName"}}},
+    {"$project":{"course":"$_id.course","_id":0,"avg":"$_id.avg"}}
+    ])
+    res = []
+    for x in usn:
+        res.append(x)
+    result = sorted(res,key=itemgetter("course"))
+    return result
+
 
 
