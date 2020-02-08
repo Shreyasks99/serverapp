@@ -1,5 +1,7 @@
 import pymongo
 from operator import itemgetter
+import re
+import bson
 
 client = pymongo.MongoClient("mongodb://localhost:27017/")
 
@@ -99,7 +101,24 @@ def getFacultyAttendance(eid,academic,term):
     result = sorted(res,key=itemgetter("course"))
     return result
 
-def getFacultyCourseAttendance(eid)
+def getFacultyCourseMarks(eid):
+    pass
+
+def getDeptFaculty(dept):
+    collection = db.dhi_user
+    pattern = re.compile(f'^{dept}')
+    regex = bson.regex.Regex.from_native(pattern)
+    regex.flags ^= re.UNICODE 
+    faculties = collection.aggregate([
+        {"$match":{"roles.roleName":"FACULTY","employeeGivenId":{"$regex":regex}}},
+        {"$sort":{"name":1}},
+        {"$project":{"employeeGivenId":1,"name":1,"_id":0}}
+    ])
+    res = []    
+    for x in faculties:
+        res.append(x)
+    return res
+
 
 
 

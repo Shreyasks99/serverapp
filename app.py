@@ -113,5 +113,10 @@ def getFacultyAttendance(eid,academic,term):
     attend = st2db.getFacultyAttendance(eid,academic,term)
     return jsonify({"res":attend})
 
+@app.route('/getDeptFaculty/<dept>')
+def getDeptFaculty(dept):
+    faculty = st2db.getDeptFaculty(dept)
+    return jsonify({"res":faculty})
+
 if __name__ == "__main__":
     app.run(port=8088,debug=True)
