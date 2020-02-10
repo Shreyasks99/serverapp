@@ -101,9 +101,6 @@ def getFacultyAttendance(eid,academic,term):
     result = sorted(res,key=itemgetter("course"))
     return result
 
-def getFacultyCourseMarks(eid):
-    pass
-
 def getDeptFaculty(dept):
     collection = db.dhi_user
     pattern = re.compile(f'^{dept}')
@@ -118,6 +115,40 @@ def getDeptFaculty(dept):
     for x in faculties:
         res.append(x)
     return res
+
+def getFacultyUE(eid,academic,term):
+    collection =db.dhi_student_attendance
+    emp = collection.aggregate([
+    {"$match":{"academicYear":academic,"students.termNumber":term}},
+    {"$unwind":{'path':"$faculties"}},
+    {"$unwind":{'path':"$faculties.facultyName"}},
+    {"$match":{"faculties.employeeGivenId":eid}},
+    {
+    "$lookup":
+    {
+    "from":"pms_university_exam",
+    "localField":"students.usn",
+    "foreignField":"terms.scores.usn",
+    "as":"usn"
+    }
+    },
+    {"$unwind":{'path':"$usn"}},
+    {"$unwind":{'path':"$usn.terms"}},
+    {"$unwind":{'path':"$usn.terms.scores"}},
+    {"$unwind":{'path':"$usn.terms.scores.courseScores"}},
+    {"$match":{"$expr":{"$eq":["$usn.terms.scores.courseScores.courseCode","$courseCode"]}}},
+    {"$group":{"_id":{"course":"$courseName"},"ue":{"$push":"$usn.terms.scores.courseScores.ueScore"}}},
+    {"$project":{"course":"$_id.course","Avg":{"$avg":"$ue"},"_id":0}}
+    ])
+    res = []
+    for x in emp:
+        res.append(x)
+    result = sorted(res,key=itemgetter("course"))
+    return result
+
+
+
+
 
 
 

@@ -118,5 +118,15 @@ def getDeptFaculty(dept):
     faculty = st2db.getDeptFaculty(dept)
     return jsonify({"res":faculty})
 
+@app.route('/getId/<name>')
+def getIdByName(name):
+    eptid = st2db.getIdByName(name)
+    return jsonify({"res":eptid})
+
+@app.route('/getFacultyUE/<eid>/<academic>/<term>')
+def getFacultyUE(eid,academic,term):
+    UE = st2db.getFacultyUE(eid,academic,term)
+    return jsonify({"res":UE})
+
 if __name__ == "__main__":
     app.run(port=8088,debug=True)
