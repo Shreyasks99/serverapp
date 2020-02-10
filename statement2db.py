@@ -25,6 +25,15 @@ def getSemester():
     semesters.sort()
     return semesters
 
+def getBranch():
+    collection = db.dhi_internal
+    b= collection.aggregate([{"$unwind":"$departments"},{"$group":{"_id":"null","sem":{"$addToSet":"$departments.deptId"}}},{"$project":{"sem":1,"_id":0}}])
+    branch = []
+    for s in b:
+        branch = s["sem"]
+    branch.sort()
+    return branch
+
 def getUsnByEmail(email):
     collection = db.dhi_user
     usn = collection.aggregate([{"$match":{"email":email}},{"$project":{"usn":1,"_id":0}}])
@@ -145,6 +154,20 @@ def getFacultyUE(eid,academic,term):
         res.append(x)
     result = sorted(res,key=itemgetter("course"))
     return result
+
+def getFacultyName(deptId):
+    collection = db.dhi_student_attendance
+    name = collection.aggregate([
+        {"$unwind":{'path':"$departments"}},
+        {"$match":{"departments.deptId":deptId}},
+        {"$unwind":{'path':"$faculties"}},
+        {"$group":{"_id":{"name":"$faculties.facultyName","empId":"$faculties.employeeGivenId"}}},
+        {"$project":{"name":"$_id.name","empId":"$_id.empId","_id":0}}
+        ])
+    res = []
+    for n in name:
+        res.append(n)
+    return res
 
 
 

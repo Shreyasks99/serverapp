@@ -83,6 +83,13 @@ def getSemester():
     sem=st2db.getSemester()
     return jsonify({'semester':sem})
 
+@app.route('/getBranch')
+def getBranch():
+    branch = st2db.getBranch()
+    return jsonify({'branch':branch})
+
+
+
 @app.route('/getUsn/<email>')
 def getUsn(email):
     usn = st2db.getUsnByEmail(email)
@@ -127,6 +134,11 @@ def getIdByName(name):
 def getFacultyUE(eid,academic,term):
     UE = st2db.getFacultyUE(eid,academic,term)
     return jsonify({"res":UE})
+
+@app.route('/getFacultyNameByDeptId/<deptId>')
+def getFacultyName(deptId):
+    name = st2db.getFacultyName(deptId)
+    return jsonify({"res":name})
 
 if __name__ == "__main__":
     app.run(port=8088,debug=True)
