@@ -85,7 +85,7 @@ def getCourseAttendance(course,usn):
     res = []
     for x in attend:
         res.append(x)
-    return res[1]
+    return res
 
 def getFacultyId(email):
     collection = db.dhi_user
