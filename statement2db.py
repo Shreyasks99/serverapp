@@ -169,6 +169,19 @@ def getFacultyName(deptId):
         res.append(n)
     return res
 
+def getAttendance(course):
+    collection = db.dhi_student_attendance
+    attend = collection.aggregate([
+    {"$match":{"courseName":course}},
+    {"$unwind":"$students"},
+    {"$project":{"total":"$students.totalNumberOfClasses","present":"$students.presentCount","_id":0}},
+    {"$limit":1}
+    ])
+    res = []
+    for n in attend:
+        res.append(n)
+    return res
+
 
 
 

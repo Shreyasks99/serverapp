@@ -140,5 +140,10 @@ def getFacultyName(deptId):
     name = st2db.getFacultyName(deptId)
     return jsonify({"res":name})
 
+@app.route('/getAttendance/<course>')
+def get(course):
+    attend = st2db.getAttendance(course)
+    return jsonify({"res":attend})
+
 if __name__ == "__main__":
     app.run(port=8088,debug=True)
